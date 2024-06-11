@@ -77,7 +77,7 @@ export default function Experience() {
           <Text
             position={[0, 1, 0]}
             color={"#362FD9"}
-            scale={0.5}
+            scale={0.8}
             fontWeight="bold"
           >
             Happy Birthday!!!
