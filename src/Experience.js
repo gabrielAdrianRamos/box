@@ -1,25 +1,27 @@
 /* eslint-disable react/no-unknown-property */
-import {
-  OrbitControls,
-  RoundedBox,
-  Box,
-  Text,
-  Sphere,
-} from "@react-three/drei";
-import { RigidBody } from "@react-three/rapier";
+import { OrbitControls, RoundedBox, Box, Text } from "@react-three/drei";
+import { CuboidCollider, RigidBody } from "@react-three/rapier";
 import { Suspense, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import MakeBox from "./MakeBox";
+import Ball from "./Ball";
 
 export default function Experience() {
   const [click, setClick] = useState(false);
-  const boxref = useRef();
+  const [intersecting, setIntersecting] = useState(false);
   const ballref = useRef();
+  const isOnFloor = useRef(true);
+
+  const jump = () => {
+    if (isOnFloor.current) {
+      ballref.current.applyImpulse({ x: 0, y: 7, z: 0 });
+      isOnFloor.current = false;
+    }
+  };
+
   useFrame(() => {
     if (click) {
-      boxref.current.applyImpulse({ x: -0.1, y: -0.1, z: -0.1 }, true);
-      boxref.current.addTorque({ x: -0.01, y: 0, z: -0.01 }, true);
-      ballref.current.applyImpulse({ x: -0.1, y: 0.9, z: -0.1 }, true);
+      jump();
     }
   });
 
@@ -28,22 +30,39 @@ export default function Experience() {
       <ambientLight intensity={1} />
       <directionalLight position={[0, -1, 10]} intensity={0.5} />
       <OrbitControls />
-      <RigidBody ref={boxref}>
+      <RigidBody>
         <Box
           args={[1.5, 1.5, 0.3]}
           rotation={[1.5, 0, 0]}
           position={[0, 0, 0]}
-          onClick={() => setClick(true)}
+          onPointerDown={() => setClick(true)}
+          onPointerUp={() => setClick(false)}
         >
           <meshStandardMaterial color={"#96c180"} />
         </Box>
       </RigidBody>
-      <RigidBody ref={ballref}>
-        <Sphere args={[0.4]} position={[0, -0.2, 0]}>
-          <meshStandardMaterial color={"#AC7D88"} />
-        </Sphere>
+      <RigidBody
+        ref={ballref}
+        colliders="ball"
+        onCollisionEnter={({ other }) => {
+          if (other.rigidBodyObject.name === "floor") {
+            isOnFloor.current = true;
+          }
+        }}
+        onCollisionExit={({ other }) => {
+          if (other.rigidBodyObject.name === "floor") {
+            isOnFloor.current = false;
+          }
+        }}
+      >
+        <Ball args={[0.3]} position={[0, -0.3, 0]} />
       </RigidBody>
-      <group position={[0, -1.2, 0]} onClick={() => setClick(true)}>
+
+      <group
+        position={[0, -1.2, 0]}
+        onPointerDown={() => setClick(true)}
+        onPointerUp={() => setClick(false)}
+      >
         <MakeBox
           color={"#c9e179"}
           args={[1.5, 1.5, 0.1]}
@@ -67,13 +86,13 @@ export default function Experience() {
           position={[-0.7, 0, 0]}
         />
       </group>
-      <RigidBody type="fixed">
-        <RoundedBox position={[0, -2, 0]} args={[9, 0.3, 9]} receiveShadow>
+      <RigidBody type="fixed" name="floor">
+        <RoundedBox position={[0, -2, 0]} args={[10, 0.3, 10]} receiveShadow>
           <meshStandardMaterial color={"#8259ae"} />
         </RoundedBox>
       </RigidBody>
       <Suspense>
-        {click && (
+        {intersecting && (
           <Text
             position={[0, 1, 0]}
             color={"#362FD9"}
@@ -84,6 +103,14 @@ export default function Experience() {
           </Text>
         )}
       </Suspense>
+      <RigidBody type="fixed">
+        <CuboidCollider
+          position={[0, 2, 0]}
+          args={[1, 0.5, 0.5]}
+          sensor
+          onIntersectionEnter={() => setIntersecting(true)}
+        />
+      </RigidBody>
     </>
   );
 }
