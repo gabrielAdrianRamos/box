@@ -3,7 +3,7 @@ export default function Ball(props) {
   return (
     <>
       <Sphere args={props.args} position={props.position}>
-        <meshStandardMaterial color={"#AC7D88"} />
+        <meshStandardMaterial color={"#03AED2"} />
       </Sphere>
     </>
   );

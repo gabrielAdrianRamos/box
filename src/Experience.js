@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unknown-property */
-import { OrbitControls, RoundedBox, Box, Text } from "@react-three/drei";
+import { OrbitControls, RoundedBox, Box, Text, Torus } from "@react-three/drei";
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
 import { Suspense, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
@@ -14,7 +14,7 @@ export default function Experience() {
 
   const jump = () => {
     if (isOnFloor.current) {
-      ballref.current.applyImpulse({ x: 0, y: 7, z: 0 });
+      ballref.current.applyImpulse({ x: 0.1, y: 7, z: 0.4 });
       isOnFloor.current = false;
     }
   };
@@ -38,7 +38,7 @@ export default function Experience() {
           onPointerDown={() => setClick(true)}
           onPointerUp={() => setClick(false)}
         >
-          <meshStandardMaterial color={"#96c180"} />
+          <meshStandardMaterial color={"#9CAFAA"} />
         </Box>
       </RigidBody>
       <RigidBody
@@ -64,23 +64,23 @@ export default function Experience() {
         onPointerUp={() => setClick(false)}
       >
         <MakeBox
-          color={"#c9e179"}
+          color={"#D6DAC8"}
           args={[1.5, 1.5, 0.1]}
           position={[0, 0, 0.7]}
         />
         <MakeBox
-          color={"#c9e179"}
+          color={"#D6DAC8"}
           args={[1.5, 1.5, 0.1]}
           position={[0, 0, -0.7]}
         />
         <MakeBox
-          color={"#c9e179"}
+          color={"#D6DAC8"}
           args={[1.5, 1.5, 0.1]}
           rotation={[0, 1.57, 0]}
           position={[0.7, 0, 0]}
         />
         <MakeBox
-          color={"#c9e179"}
+          color={"#D6DAC8"}
           args={[1.5, 1.5, 0.1]}
           rotation={[0, 1.57, 0]}
           position={[-0.7, 0, 0]}
@@ -88,18 +88,20 @@ export default function Experience() {
       </group>
       <RigidBody type="fixed" name="floor">
         <RoundedBox position={[0, -2, 0]} args={[10, 0.3, 10]} receiveShadow>
-          <meshStandardMaterial color={"#8259ae"} />
+          <meshStandardMaterial color={"#B3C8CF"} />
         </RoundedBox>
       </RigidBody>
       <Suspense>
         {intersecting && (
           <Text
-            position={[0, 1, 0]}
-            color={"#362FD9"}
-            scale={0.8}
+            position={[0, 2, 0]}
+            font={"fonts/Poppins-Black.ttf"}
+            color={"#352F44"}
+            scale={1.4}
             fontWeight="bold"
+            textAlign="center"
           >
-            Happy Birthday!!!
+            {`Happy\n Birthday!!!`}
           </Text>
         )}
       </Suspense>
