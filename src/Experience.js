@@ -97,7 +97,7 @@ export default function Experience() {
             position={[0, 2, 0]}
             font={"fonts/Poppins-Black.ttf"}
             color={"#352F44"}
-            scale={1.4}
+            scale={1.1}
             fontWeight="bold"
             textAlign="center"
           >
