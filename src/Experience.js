@@ -10,11 +10,13 @@ export default function Experience() {
   const [click, setClick] = useState(false);
   const [intersecting, setIntersecting] = useState(false);
   const ballref = useRef();
+  const ballref2 = useRef();
   const isOnFloor = useRef(true);
 
   const jump = () => {
     if (isOnFloor.current) {
-      ballref.current.applyImpulse({ x: 0.1, y: 7, z: 0.4 });
+      ballref.current.applyImpulse({ x: 0.5, y: 8, z: 0.4 });
+      ballref2.current.applyImpulse({ x: -0.5, y: 8, z: 0.4 });
       isOnFloor.current = false;
     }
   };
@@ -32,7 +34,7 @@ export default function Experience() {
       <OrbitControls />
       <RigidBody>
         <Box
-          args={[1.5, 1.5, 0.3]}
+          args={[2, 2.1, 0.3]}
           rotation={[1.5, 0, 0]}
           position={[0, 0, 0]}
           onPointerDown={() => setClick(true)}
@@ -41,6 +43,7 @@ export default function Experience() {
           <meshStandardMaterial color={"#9CAFAA"} />
         </Box>
       </RigidBody>
+      {/* /first ball */}
       <RigidBody
         ref={ballref}
         colliders="ball"
@@ -55,7 +58,24 @@ export default function Experience() {
           }
         }}
       >
-        <Ball args={[0.3]} position={[0, -0.3, 0]} />
+        <Ball args={[0.4]} position={[0, -0.3, 0]} />
+      </RigidBody>
+      {/* second ball */}
+      <RigidBody
+        ref={ballref2}
+        colliders="ball"
+        onCollisionEnter={({ other }) => {
+          if (other.rigidBodyObject.name === "floor") {
+            isOnFloor.current = true;
+          }
+        }}
+        onCollisionExit={({ other }) => {
+          if (other.rigidBodyObject.name === "floor") {
+            isOnFloor.current = false;
+          }
+        }}
+      >
+        <Ball args={[0.4]} position={[-0.2, -0.3, 0]} />
       </RigidBody>
 
       <group
@@ -63,27 +83,19 @@ export default function Experience() {
         onPointerDown={() => setClick(true)}
         onPointerUp={() => setClick(false)}
       >
+        <MakeBox color={"#D6DAC8"} args={[2, 2, 0.1]} position={[0, 0, 1]} />
+        <MakeBox color={"#D6DAC8"} args={[2, 2, 0.1]} position={[0, 0, -1]} />
         <MakeBox
           color={"#D6DAC8"}
-          args={[1.5, 1.5, 0.1]}
-          position={[0, 0, 0.7]}
-        />
-        <MakeBox
-          color={"#D6DAC8"}
-          args={[1.5, 1.5, 0.1]}
-          position={[0, 0, -0.7]}
-        />
-        <MakeBox
-          color={"#D6DAC8"}
-          args={[1.5, 1.5, 0.1]}
+          args={[2, 2, 0.1]}
           rotation={[0, 1.57, 0]}
-          position={[0.7, 0, 0]}
+          position={[0.95, 0, 0]}
         />
         <MakeBox
           color={"#D6DAC8"}
-          args={[1.5, 1.5, 0.1]}
+          args={[2, 2, 0.1]}
           rotation={[0, 1.57, 0]}
-          position={[-0.7, 0, 0]}
+          position={[-0.95, 0, 0]}
         />
       </group>
       <RigidBody type="fixed" name="floor">
@@ -92,7 +104,7 @@ export default function Experience() {
         </RoundedBox>
       </RigidBody>
       <Suspense>
-        {intersecting && (
+        {intersecting ? (
           <Text
             position={[0, 2, 0]}
             font={"fonts/Poppins-Black.ttf"}
@@ -102,6 +114,17 @@ export default function Experience() {
             textAlign="center"
           >
             {`Happy\n Birthday!!!`}
+          </Text>
+        ) : (
+          <Text
+            position={[0, -1, 1.5]}
+            font={"fonts/Poppins-Black.ttf"}
+            color={"#352F44"}
+            scale={0.5}
+            fontWeight="bold"
+            textAlign="center"
+          >
+            Click the box
           </Text>
         )}
       </Suspense>
