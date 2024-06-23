@@ -1,10 +1,11 @@
 /* eslint-disable react/no-unknown-property */
 import { OrbitControls, RoundedBox, Box, Text, Torus } from "@react-three/drei";
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
-import { Suspense, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import MakeBox from "./MakeBox";
 import Ball from "./Ball";
+import JSConfetti from "js-confetti";
 
 export default function Experience() {
   const [click, setClick] = useState(false);
@@ -12,6 +13,7 @@ export default function Experience() {
   const ballref = useRef();
   const ballref2 = useRef();
   const isOnFloor = useRef(true);
+  const jsConfetti = new JSConfetti();
 
   const jump = () => {
     if (isOnFloor.current) {
@@ -20,6 +22,12 @@ export default function Experience() {
       isOnFloor.current = false;
     }
   };
+
+  useEffect(() => {
+    if (intersecting) {
+      jsConfetti.addConfetti();
+    }
+  });
 
   useFrame(() => {
     if (click) {
@@ -103,31 +111,31 @@ export default function Experience() {
           <meshStandardMaterial color={"#B3C8CF"} />
         </RoundedBox>
       </RigidBody>
-      <Suspense>
-        {intersecting ? (
-          <Text
-            position={[0, 2, 0]}
-            font={"fonts/Poppins-Black.ttf"}
-            color={"#352F44"}
-            scale={1.1}
-            fontWeight="bold"
-            textAlign="center"
-          >
-            {`Happy\n Birthday!!!`}
-          </Text>
-        ) : (
-          <Text
-            position={[0, -1, 1.5]}
-            font={"fonts/Poppins-Black.ttf"}
-            color={"#352F44"}
-            scale={0.5}
-            fontWeight="bold"
-            textAlign="center"
-          >
-            Click the box
-          </Text>
-        )}
-      </Suspense>
+      {/* <Suspense> */}
+      {intersecting ? (
+        <Text
+          position={[0, 2, 0]}
+          font={"fonts/Poppins-Black.ttf"}
+          color={"#352F44"}
+          scale={1.1}
+          fontWeight="bold"
+          textAlign="center"
+        >
+          {`Happy\n Birthday!!!`}
+        </Text>
+      ) : (
+        <Text
+          position={[0, -1, 1.5]}
+          font={"fonts/Poppins-Black.ttf"}
+          color={"#352F44"}
+          scale={0.5}
+          fontWeight="bold"
+          textAlign="center"
+        >
+          Click the box
+        </Text>
+      )}
+      {/* </Suspense> */}
       <RigidBody type="fixed">
         <CuboidCollider
           position={[0, 2, 0]}
